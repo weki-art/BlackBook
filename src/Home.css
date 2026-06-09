@@ -1,0 +1,655 @@
+.home-page {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #121414;
+  position: relative;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  height: 64px;
+  background-color: #121414;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo-badge {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4px;
+  background-color: #FFB800;
+  border-radius: 8px;
+}
+
+.header-logo {
+  width: 16px;
+  height: 20px;
+}
+
+.header-title {
+  font-family: 'WenQuanYi Zen Hei', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 32px;
+  color: #FFDCA1;
+  margin: 0;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logout-button {
+  padding: 8px 12px;
+  background-color: transparent;
+  border: 1px solid rgba(255, 184, 0, 0.3);
+  border-radius: 8px;
+  color: rgba(255, 184, 0, 0.8);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logout-button:hover {
+  background-color: rgba(255, 184, 0, 0.1);
+  border-color: rgba(255, 184, 0, 0.5);
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  border: 2px solid rgba(255, 220, 161, 0.2);
+  overflow: hidden;
+}
+
+.avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #FFB800 0%, #FF8C00 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  font-weight: 700;
+  color: #6B4C00;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  padding-bottom: 100px;
+}
+
+.error-message {
+  width: 100%;
+  padding: 12px 16px;
+  background-color: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  color: #ef4444;
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.notes-loading {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.empty-icon {
+  font-size: 64px;
+  margin-bottom: 24px;
+}
+
+.empty-state h2 {
+  font-family: 'WenQuanYi Zen Hei', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: #E2E2E2;
+  margin: 0 0 12px 0;
+}
+
+.empty-state p {
+  font-family: 'WenQuanYi Zen Hei', sans-serif;
+  font-size: 14px;
+  color: rgba(213, 196, 171, 0.6);
+  margin: 0;
+  max-width: 280px;
+  line-height: 1.6;
+}
+
+.notes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.note-card {
+  width: 100%;
+  background-color: #1E2020;
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid rgba(255, 184, 0, 0.1);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.note-card:hover {
+  border-color: rgba(255, 184, 0, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.note-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.note-title {
+  font-family: 'WenQuanYi Zen Hei', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: #E2E2E2;
+  margin: 0;
+  flex: 1;
+  padding-right: 12px;
+}
+
+/* 右上角菜单按钮 */
+.menu-container {
+  position: relative;
+}
+
+.menu-button {
+  width: 32px;
+  height: 32px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: none;
+  border-radius: 6px;
+  color: rgba(213, 196, 171, 0.8);
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s ease;
+  line-height: 1;
+}
+
+.menu-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #FFB800;
+}
+
+/* 下拉菜单 */
+.menu-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 4px;
+  background-color: #1E2020;
+  border: 1px solid rgba(255, 184, 0, 0.2);
+  border-radius: 8px;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.4);
+  z-index: 100;
+  min-width: 120px;
+  overflow: hidden;
+  animation: menuFadeIn 0.15s ease;
+}
+
+@keyframes menuFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.menu-item {
+  width: 100%;
+  padding: 10px 16px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: rgba(213, 196, 171, 0.9);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: left;
+  transition: all 0.15s ease;
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.menu-item:hover {
+  background-color: rgba(255, 184, 0, 0.08);
+}
+
+.menu-item-edit:hover {
+  color: #FFB800;
+}
+
+.menu-item-delete:hover {
+  color: #ef4444;
+  background-color: rgba(239, 68, 68, 0.08);
+}
+
+.note-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.note-category {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #fff;
+}
+
+.note-author {
+  font-size: 14px;
+  color: rgba(213, 196, 171, 0.6);
+}
+
+.note-content {
+  font-size: 15px;
+  line-height: 1.6;
+  color: rgba(213, 196, 171, 0.9);
+  margin: 0 0 12px 0;
+}
+
+.note-date {
+  font-size: 13px;
+  color: rgba(213, 196, 171, 0.4);
+}
+
+.footer {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+}
+
+.fab-button {
+  width: 56px;
+  height: 56px;
+  background-color: #FFB800;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0px 4px 20px -4px rgba(255, 184, 0, 0.4);
+  transition: all 0.2s ease;
+}
+
+.fab-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0px 6px 24px -4px rgba(255, 184, 0, 0.5);
+}
+
+.fab-button:active {
+  transform: scale(0.98);
+}
+
+.fab-icon {
+  font-size: 32px;
+  font-weight: 700;
+  color: #6B4C00;
+  line-height: 1;
+}
+
+/* 删除确认对话框 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 16px;
+}
+
+.modal-content {
+  width: 100%;
+  max-width: 360px;
+  background-color: #1E2020;
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid rgba(255, 184, 0, 0.2);
+}
+
+.modal-title {
+  font-family: 'WenQuanYi Zen Hei', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: #E2E2E2;
+  margin: 0 0 12px 0;
+  text-align: center;
+}
+
+.modal-message {
+  font-family: 'WenQuanYi Zen Hei', sans-serif;
+  font-size: 14px;
+  color: #9CA3AF;
+  margin: 0 0 20px 0;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.modal-cancel {
+  flex: 1;
+  height: 44px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: #E2E2E2;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-cancel:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.modal-confirm {
+  flex: 1;
+  height: 44px;
+  background-color: #EF4444;
+  border: none;
+  border-radius: 8px;
+  color: #FFFFFF;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-confirm:hover:not(:disabled) {
+  background-color: #DC2626;
+}
+
+.modal-confirm:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 笔记卡片缩略图预览 */
+.note-images-container {
+  margin: 10px 0 12px 0;
+  width: 100%;
+}
+
+/* 统一的缩略图网格 - 使用固定比例，确保协调 */
+.note-images-grid {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+}
+
+/* 单张图片 - 横向缩略图（4:3比例） */
+.note-images-1 {
+  grid-template-columns: 1fr;
+}
+
+.note-images-1 .note-image-wrapper {
+  aspect-ratio: 4 / 3;
+}
+
+/* 2张图片 - 横向缩略图（各占一半） */
+.note-images-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.note-images-2 .note-image-wrapper {
+  aspect-ratio: 4 / 3;
+}
+
+/* 3张图片 - 横向缩略图（各占1/3） */
+.note-images-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.note-images-3 .note-image-wrapper {
+  aspect-ratio: 4 / 3;
+}
+
+/* 缩略图容器 - 统一风格 */
+.note-image-wrapper {
+  position: relative;
+  border-radius: 6px;
+  overflow: hidden;
+  background-color: #1E2020;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.note-image-wrapper:hover {
+  border-color: rgba(255, 184, 0, 0.3);
+}
+
+/* 缩略图图片 - 保持内容完整性和清晰度 */
+.note-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transition: transform 0.3s ease;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+.note-image-wrapper:hover .note-image {
+  transform: scale(1.03);
+}
+
+/* ===== 图片加载优化：骨架屏 + 加载状态 ===== */
+/* 骨架屏 - 图片加载前的占位符，防止布局抖动 */
+.note-image-skeleton {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1E2020 0%, #2A2D2D 50%, #1E2020 100%);
+  background-size: 200% 100%;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* 骨架屏闪光动画 - 提示图片正在加载 */
+.skeleton-shimmer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 184, 0, 0.08) 50%,
+    transparent 100%
+  );
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* 加载中状态 - 隐藏图片（骨架屏展示中） */
+.note-image-wrapper.is-loading .note-image {
+  opacity: 0;
+}
+
+/* 图片加载完成后 - 淡入效果 */
+.note-image {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  opacity: 1;
+}
+
+/* 图片加载错误状态 - 优雅降级 */
+.note-image-wrapper.has-error {
+  background: #1E2020;
+}
+
+.note-image-error {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  opacity: 0.5;
+  z-index: 1;
+}
+
+/* 更多图片叠加层 */
+.note-more-images {
+  background: linear-gradient(135deg, #1E2020 0%, #2A2D2D 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 184, 0, 0.15);
+}
+
+.note-more-images:hover {
+  background: linear-gradient(135deg, #2A2D2D 0%, #353939 100%);
+  border-color: rgba(255, 184, 0, 0.3);
+}
+
+.more-images-overlay {
+  font-family: 'WenQuanYi Zen Hei', sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: #FFDCA1;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.note-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.note-image-count {
+  font-family: 'WenQuanYi Zen Hei', sans-serif;
+  font-size: 12px;
+  color: rgba(213, 196, 171, 0.6);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* 查看详情提示 */
+.note-card-hint {
+  margin-top: 12px;
+  padding: 8px 12px;
+  background-color: rgba(255, 184, 0, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 184, 0, 0.1);
+  font-size: 13px;
+  color: #FFB800;
+  font-weight: 500;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.note-card:hover .note-card-hint {
+  background-color: rgba(255, 184, 0, 0.1);
+  border-color: rgba(255, 184, 0, 0.2);
+}
+
+/* 确认删除按钮 */
+.modal-icon {
+  font-size: 48px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.modal-confirm-danger {
+  flex: 1;
+  height: 44px;
+  background-color: #EF4444;
+  border: none;
+  border-radius: 8px;
+  color: #FFFFFF;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-confirm-danger:hover:not(:disabled) {
+  background-color: #DC2626;
+}
+
+.modal-confirm-danger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
