@@ -1,9 +1,42 @@
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import './Home.css';
 import LogoIcon from './assets/logo.svg';
 import { useAuth } from './hooks/useAuth.jsx';
 import { useNotes } from './hooks/useNotes.jsx';
 import notesService from './services/notes';
+
+// 搜索输入组件
+function SearchInput({ value, onChange, onClear, placeholder }) {
+  const [isFocused, setIsFocused] = useState(false);
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Escape') {
+      onClear();
+    }
+  };
+
+  return (
+    <div className={`search-input-wrapper ${isFocused ? 'is-focused' : ''}`}>
+      <span className="search-icon">🔍</span>
+      <input
+        type="text"
+        className="search-input"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        onKeyDown={handleKeyDown}
+        placeholder={placeholder}
+        autoComplete="off"
+      />
+      {value && (
+        <button className="search-clear" onClick={onClear} title="清除搜索">
+          ✕
+        </button>
+      )}
+    </div>
+  );
+}
 
 /**
  * 优化的缩略图组件
@@ -118,6 +151,21 @@ function NoteCard({ note, onDelete, onEdit, onViewDetail }) {
   const displayImages = optimizedImages.slice(0, 3);
   const remainingCount = images.length - displayImages.length;
 
+  let tags = [];
+  if (note?.tags) {
+    if (Array.isArray(note.tags)) {
+      tags = note.tags;
+    } else if (typeof note.tags === 'string') {
+      try {
+        const parsed = JSON.parse(note.tags);
+        tags = Array.isArray(parsed) ? parsed : [];
+      } catch {
+        tags = [];
+      }
+    }
+  }
+  tags = tags.filter(tag => tag && typeof tag === 'string' && tag.trim().length > 0).slice(0, 4);
+
   const handleCardClick = (e) => {
     if (showMenu) {
       setShowMenu(false);
@@ -207,6 +255,16 @@ function NoteCard({ note, onDelete, onEdit, onViewDetail }) {
         </span>
       </div>
 
+      {tags.length > 0 && (
+        <div className="note-tags">
+          {tags.map((tag, index) => (
+            <span key={`tag-${index}`} className="note-tag">
+              #{tag}
+            </span>
+          ))}
+        </div>
+      )}
+
       {displayImages.length > 0 && (
         <div className="note-images-container">
           <div className={`note-images-grid note-images-${Math.min(displayImages.length, 3)}`}>
@@ -259,6 +317,16 @@ function Home({ onCreateNote, onViewDetail, onEdit }) {
   const { notes, loading, error, deleteNote, refresh } = useNotes();
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(null);
+  
+  // 搜索状态
+  const [searchKeyword, setSearchKeyword] = useState('');
+
+  const handleSignOut = () => {
+    // 使用独立的处理函数，避免异步错误冒泡
+    signOut().catch((err) => {
+      console.log('[Home] 退出处理:', err?.message);
+    });
+  };
 
   const safeNotes = useMemo(() => {
     if (!Array.isArray(notes)) {
@@ -278,6 +346,52 @@ function Home({ onCreateNote, onViewDetail, onEdit }) {
     
     return result;
   }, [notes]);
+
+  // 搜索过滤逻辑（模糊匹配标题、内容、标签、分类）
+  const filteredNotes = useMemo(() => {
+    if (!searchKeyword.trim()) {
+      return safeNotes;
+    }
+
+    const keyword = searchKeyword.toLowerCase().trim();
+    return safeNotes.filter(note => {
+      // 匹配标题
+      const matchTitle = note.title && note.title.toLowerCase().includes(keyword);
+      // 匹配内容
+      const matchContent = note.content && note.content.toLowerCase().includes(keyword);
+      // 匹配标签
+      let matchTags = false;
+      if (note.tags) {
+        if (Array.isArray(note.tags)) {
+          matchTags = note.tags.some(tag => 
+            typeof tag === 'string' && tag.toLowerCase().includes(keyword)
+          );
+        } else if (typeof note.tags === 'string') {
+          try {
+            const parsedTags = JSON.parse(note.tags);
+            if (Array.isArray(parsedTags)) {
+              matchTags = parsedTags.some(tag => 
+                typeof tag === 'string' && tag.toLowerCase().includes(keyword)
+              );
+            } else {
+              matchTags = note.tags.toLowerCase().includes(keyword);
+            }
+          } catch {
+            matchTags = note.tags.toLowerCase().includes(keyword);
+          }
+        }
+      }
+      // 匹配分类名称
+      const matchCategory = note.category && note.category.toLowerCase().includes(keyword);
+      
+      return matchTitle || matchContent || matchTags || matchCategory;
+    });
+  }, [safeNotes, searchKeyword]);
+
+  // 清除搜索
+  const clearSearch = useCallback(() => {
+    setSearchKeyword('');
+  }, []);
 
   const handleDelete = (id) => {
     if (!id || deleteLoading) return;
@@ -320,7 +434,7 @@ function Home({ onCreateNote, onViewDetail, onEdit }) {
           <h1 className="header-title">避雷笔记本</h1>
         </div>
         <div className="header-right">
-          <button className="logout-button" onClick={signOut}>
+          <button className="logout-button" onClick={handleSignOut}>
             退出
           </button>
           <div className="user-avatar">
@@ -332,6 +446,26 @@ function Home({ onCreateNote, onViewDetail, onEdit }) {
       </header>
 
       <main className="main-content">
+        {/* 搜索区域 */}
+        <div className="search-section">
+          <SearchInput
+            value={searchKeyword}
+            onChange={setSearchKeyword}
+            onClear={clearSearch}
+            placeholder="搜索笔记标题、内容、标签或分类..."
+          />
+        </div>
+
+        {/* 搜索结果统计 */}
+        {searchKeyword && (
+          <div className="search-result-info">
+            找到 <span className="result-count">{filteredNotes.length}</span> 条笔记
+            <button className="clear-filter-btn" onClick={clearSearch}>
+              清除搜索
+            </button>
+          </div>
+        )}
+
         {error && (
           <div className="error-message">
             {error}
@@ -342,15 +476,22 @@ function Home({ onCreateNote, onViewDetail, onEdit }) {
           <div className="notes-loading">
             <div className="loading-spinner"></div>
           </div>
-        ) : safeNotes.length === 0 ? (
+        ) : filteredNotes.length === 0 ? (
           <div className="empty-state">
-            <div className="empty-icon">📝</div>
-            <h2>还没有避雷笔记</h2>
-            <p>点击下方按钮开始记录你的第一条避雷经验吧！</p>
+            <div className="empty-icon">{searchKeyword ? '🔍' : '📝'}</div>
+            <h2>
+              {searchKeyword ? '没有找到匹配的笔记' : '还没有避雷笔记'}
+            </h2>
+            <p>
+              {searchKeyword 
+                ? '尝试更换关键词' 
+                : '点击下方按钮开始记录你的第一条避雷经验吧！'
+              }
+            </p>
           </div>
         ) : (
           <div className="notes-list">
-            {safeNotes.map((note, index) => {
+            {filteredNotes.map((note, index) => {
               if (!note || !note.id) {
                 return null;
               }

@@ -9,10 +9,15 @@ function CreateNote({ noteId, onBack }) {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [category, setCategory] = useState('');
+  const [tags, setTags] = useState([]);
+  const [tagInput, setTagInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(false);
   const [error, setError] = useState('');
   const { user } = useAuth();
+
+  const MAX_TAGS = 8;
+  const MAX_TAG_LENGTH = 20;
 
   const categories = ['购物', '食品', '服饰', '出行', '娱乐', '工具', '医药', '教培', '情感', '其他'];
   
@@ -43,6 +48,22 @@ function CreateNote({ noteId, onBack }) {
         setTitle(data.title || '');
         setContent(data.content || '');
         setCategory(data.category || '');
+
+        let noteTags = [];
+        if (data.tags) {
+          if (Array.isArray(data.tags)) {
+            noteTags = data.tags;
+          } else if (typeof data.tags === 'string') {
+            try {
+              const parsed = JSON.parse(data.tags);
+              noteTags = Array.isArray(parsed) ? parsed : [];
+            } catch {
+              noteTags = [];
+            }
+          }
+        }
+        noteTags = noteTags.filter(tag => tag && typeof tag === 'string' && tag.trim().length > 0);
+        setTags(noteTags.slice(0, MAX_TAGS));
         
         let noteImages = [];
         if (data.images) {
@@ -81,6 +102,41 @@ function CreateNote({ noteId, onBack }) {
     } finally {
       setInitialLoading(false);
     }
+  };
+
+  const handleAddTag = () => {
+    const trimmedTag = tagInput.trim();
+    if (!trimmedTag) return;
+
+    if (trimmedTag.length > MAX_TAG_LENGTH) {
+      setError(`单个标签不能超过 ${MAX_TAG_LENGTH} 个字符`);
+      return;
+    }
+
+    if (tags.length >= MAX_TAGS) {
+      setError(`最多只能添加 ${MAX_TAGS} 个标签`);
+      return;
+    }
+
+    if (tags.includes(trimmedTag)) {
+      setError('该标签已存在');
+      return;
+    }
+
+    setTags(prev => [...prev, trimmedTag]);
+    setTagInput('');
+    setError('');
+  };
+
+  const handleTagKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAddTag();
+    }
+  };
+
+  const handleRemoveTag = (indexToRemove) => {
+    setTags(prev => prev.filter((_, index) => index !== indexToRemove));
   };
 
   const handleImageSelect = async (e) => {
@@ -236,6 +292,7 @@ function CreateNote({ noteId, onBack }) {
           title,
           content,
           category,
+          tags: tags.length > 0 ? tags : null,
           images: finalImages.length > 0 ? finalImages : null,
         });
 
@@ -245,6 +302,7 @@ function CreateNote({ noteId, onBack }) {
           title,
           content,
           category,
+          tags: tags.length > 0 ? tags : null,
           user_id: user.id,
           user_email: user.email,
           user_nickname: user.user_metadata?.nickname || '匿名用户',
@@ -325,6 +383,19 @@ function CreateNote({ noteId, onBack }) {
                 </button>
               ))}
             </div>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">详情</label>
+            <textarea
+              className="form-textarea"
+              placeholder="详细描述你的避坑经历..."
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              rows={10}
+              disabled={loading || uploading}
+              required
+            />
           </div>
 
           <div className="form-group">
@@ -416,16 +487,48 @@ function CreateNote({ noteId, onBack }) {
           </div>
 
           <div className="form-group">
-            <label className="form-label">详情</label>
-            <textarea
-              className="form-textarea"
-              placeholder="详细描述你的避坑经历..."
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              rows={10}
-              disabled={loading || uploading}
-              required
-            />
+            <label className="form-label">标签 (最多{MAX_TAGS}个)</label>
+            
+            {tags.length > 0 && (
+              <div className="tags-container">
+                {tags.map((tag, index) => (
+                  <span key={`tag-${index}`} className="tag-chip">
+                    {tag}
+                    <button
+                      type="button"
+                      className="tag-remove-btn"
+                      onClick={() => handleRemoveTag(index)}
+                      disabled={loading || uploading}
+                    >
+                      ✕
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
+            
+            <div className="tag-input-wrapper">
+              <input
+                type="text"
+                className="tag-input"
+                placeholder="输入标签后按回车"
+                value={tagInput}
+                onChange={(e) => setTagInput(e.target.value)}
+                onKeyDown={handleTagKeyDown}
+                disabled={loading || uploading || tags.length >= MAX_TAGS}
+              />
+              <button
+                type="button"
+                className="tag-add-btn"
+                onClick={handleAddTag}
+                disabled={loading || uploading || !tagInput.trim() || tags.length >= MAX_TAGS}
+              >
+                +
+              </button>
+            </div>
+            <div className="tag-count-info">
+              已添加 {tags.length} / {MAX_TAGS} 个标签
+            </div>
           </div>
 
           <button type="submit" className="submit-button" disabled={loading || uploading}>

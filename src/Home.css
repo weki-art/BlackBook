@@ -7,6 +7,105 @@
   position: relative;
 }
 
+/* ===== 搜索区域样式 ===== */
+.search-section {
+  margin-bottom: 16px;
+}
+
+/* 搜索输入框 */
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: #1E2020;
+  border: 1px solid rgba(255, 184, 0, 0.2);
+  border-radius: 12px;
+  padding: 0 16px;
+  height: 48px;
+  transition: all 0.2s ease;
+}
+
+.search-input-wrapper.is-focused {
+  border-color: rgba(255, 184, 0, 0.5);
+  box-shadow: 0 0 0 3px rgba(255, 184, 0, 0.1);
+}
+
+.search-icon {
+  font-size: 18px;
+  margin-right: 12px;
+  color: rgba(213, 196, 171, 0.6);
+}
+
+.search-input {
+  flex: 1;
+  height: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #E2E2E2;
+  font-size: 15px;
+  font-family: 'WenQuanYi Zen Hei', sans-serif;
+}
+
+.search-input::placeholder {
+  color: rgba(213, 196, 171, 0.4);
+}
+
+.search-clear {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 50%;
+  color: rgba(213, 196, 171, 0.6);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.search-clear:hover {
+  background-color: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+/* 搜索结果统计 */
+.search-result-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background-color: rgba(255, 184, 0, 0.05);
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: rgba(213, 196, 171, 0.8);
+}
+
+.result-count {
+  font-weight: 700;
+  color: #FFB800;
+  font-size: 16px;
+}
+
+.clear-filter-btn {
+  padding: 4px 12px;
+  background-color: rgba(255, 184, 0, 0.1);
+  border: 1px solid rgba(255, 184, 0, 0.3);
+  border-radius: 6px;
+  color: #FFB800;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clear-filter-btn:hover {
+  background-color: rgba(255, 184, 0, 0.18);
+  border-color: rgba(255, 184, 0, 0.5);
+}
+
 .header {
   display: flex;
   justify-content: space-between;
@@ -293,6 +392,30 @@
 .note-author {
   font-size: 14px;
   color: rgba(213, 196, 171, 0.6);
+}
+
+/* ===== 笔记卡片标签样式 ===== */
+.note-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.note-tag {
+  padding: 4px 10px;
+  background-color: rgba(255, 184, 0, 0.1);
+  border: 1px solid rgba(255, 184, 0, 0.2);
+  border-radius: 10px;
+  font-family: 'WenQuanYi Zen Hei', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: #FFB800;
+  transition: all 0.2s ease;
+}
+
+.note-tag:hover {
+  background-color: rgba(255, 184, 0, 0.18);
 }
 
 .note-content {

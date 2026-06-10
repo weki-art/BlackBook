@@ -105,11 +105,9 @@ function NoteDetail({ noteId, onBack, onEdit }) {
 
   let images = [];
   if (note?.images) {
-    // Supabase 会直接返回数组，不需要 JSON.parse
     if (Array.isArray(note.images)) {
       images = note.images;
     } else if (typeof note.images === 'string') {
-      // 兼容旧数据（JSON 字符串格式）
       try {
         const parsed = JSON.parse(note.images);
         images = Array.isArray(parsed) ? parsed : [parsed];
@@ -120,8 +118,22 @@ function NoteDetail({ noteId, onBack, onEdit }) {
       images = [note.images];
     }
   }
-  // 过滤空值和无效URL
   images = images.filter(img => img && typeof img === 'string' && img.trim().length > 0);
+
+  let tags = [];
+  if (note?.tags) {
+    if (Array.isArray(note.tags)) {
+      tags = note.tags;
+    } else if (typeof note.tags === 'string') {
+      try {
+        const parsed = JSON.parse(note.tags);
+        tags = Array.isArray(parsed) ? parsed : [];
+      } catch {
+        tags = [];
+      }
+    }
+  }
+  tags = tags.filter(tag => tag && typeof tag === 'string' && tag.trim().length > 0);
 
   // 优化图片URL - 详情页使用压缩的大图 (比原图小很多)
   const optimizedImages = images.map(url => notesService.getDetailImageUrl(url));
@@ -210,6 +222,15 @@ function NoteDetail({ noteId, onBack, onEdit }) {
                 📅 {formatDate(note.created_at)}
               </span>
             </div>
+            {tags.length > 0 && (
+              <div className="article-tags">
+                {tags.map((tag, index) => (
+                  <span key={`tag-${index}`} className="article-tag">
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            )}
           </header>
 
           {images.length > 0 && (

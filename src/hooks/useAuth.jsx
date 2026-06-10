@@ -12,23 +12,47 @@ export function AuthProvider({ children }) {
     let mounted = true;
 
     const init = async () => {
-      const session = await authService.getSession();
-      if (mounted) {
-        setUser(session?.user || null);
-        setLoading(false);
+      try {
+        const session = await authService.getSession();
+        if (mounted) {
+          setUser(session?.user || null);
+          setLoading(false);
+        }
+      } catch (err) {
+        console.log('[useAuth] 初始化会话失败:', err?.message);
+        if (mounted) {
+          setUser(null);
+          setLoading(false);
+        }
       }
     };
 
     init();
 
     const { data: { subscription } } = authService.onAuthStateChange((event, session) => {
-      console.log('Auth event:', event);
-      if (mounted) {
-        setUser(session?.user || null);
+      console.log('[useAuth] Auth event:', event);
+      if (!mounted) return;
+
+      if (event === 'SIGNED_OUT') {
+        // 会话已失效（可能是 refresh token 过期触发）
+        setUser(null);
         setLoading(false);
-        if (event === 'SIGNED_IN') {
-          setRegisterSuccess(false);
-        }
+        return;
+      }
+
+      if (event === 'INITIAL_SESSION' && !session) {
+        // 初始会话不存在 → 未登录
+        setUser(null);
+        setLoading(false);
+        return;
+      }
+
+      // 正常会话：SIGNED_IN / TOKEN_REFRESHED / INITIAL_SESSION 且 session 存在
+      setUser(session?.user || null);
+      setLoading(false);
+
+      if (event === 'SIGNED_IN') {
+        setRegisterSuccess(false);
       }
     });
 
@@ -51,11 +75,15 @@ export function AuthProvider({ children }) {
   };
 
   const signOut = async () => {
-    const { error } = await authService.signOut();
-    if (!error) {
-      setUser(null);
+    try {
+      await authService.signOut();
+    } catch (err) {
+      // 忽略任何错误，继续清理本地状态
+      console.log('[useAuth] signOut 过程中出现错误，继续清理本地状态:', err?.message);
     }
-    return { error };
+    // 无论成功与否，都强制清空本地用户状态
+    setUser(null);
+    return { error: null };
   };
 
   const clearRegisterSuccess = () => {

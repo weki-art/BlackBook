@@ -394,3 +394,184 @@
   margin-top: 8px;
   text-align: right;
 }
+
+/* ===== 标签样式 ===== */
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background-color: rgba(255, 184, 0, 0.15);
+  border: 1px solid rgba(255, 184, 0, 0.3);
+  border-radius: 20px;
+  font-family: 'WenQuanYi Zen Hei', sans-serif;
+  font-size: 13px;
+  color: #FFB800;
+}
+
+.tag-remove-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  background-color: rgba(255, 184, 0, 0.2);
+  border: none;
+  border-radius: 50%;
+  color: #FFB800;
+  font-size: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tag-remove-btn:hover {
+  background-color: rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+}
+
+.tag-remove-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.tag-input-wrapper {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.tag-input {
+  flex: 1;
+  height: 48px;
+  padding: 0 16px;
+  background-color: #1E2020;
+  border: none;
+  border-radius: 12px;
+  font-family: 'WenQuanYi Zen Hei', sans-serif;
+  font-size: 14px;
+  color: #E2E2E2;
+  outline: none;
+  transition: box-shadow 0.2s ease;
+}
+
+.tag-input::placeholder {
+  color: rgba(213, 196, 171, 0.5);
+}
+
+.tag-input:focus {
+  box-shadow: 0 0 0 2px rgba(255, 184, 0, 0.3);
+}
+
+.tag-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.tag-add-btn {
+  width: 48px;
+  height: 48px;
+  background-color: #FFB800;
+  border: none;
+  border-radius: 12px;
+  font-family: 'WenQuanYi Zen Hei', sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: #1E1E1E;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.tag-add-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0px 4px 12px rgba(255, 184, 0, 0.4);
+}
+
+.tag-add-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.tag-count-info {
+  font-family: 'WenQuanYi Zen Hei', sans-serif;
+  font-size: 12px;
+  color: rgba(213, 196, 171, 0.6);
+  margin-top: 8px;
+  text-align: right;
+}
+
+/* ===== 公开分享开关样式 ===== */
+.public-toggle-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.public-toggle-label {
+  margin-left: 4px;
+  margin-bottom: 0;
+}
+
+.public-toggle-container {
+  display: flex;
+  align-items: center;
+}
+
+.toggle-switch {
+  position: relative;
+  width: 52px;
+  height: 30px;
+  background-color: #2A2D2D;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  padding: 0;
+}
+
+.toggle-switch:hover:not(:disabled) {
+  background-color: #3A3D3D;
+}
+
+.toggle-switch.active {
+  background-color: #FFB800;
+}
+
+.toggle-switch:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.toggle-circle {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 24px;
+  height: 24px;
+  background-color: #FFFFFF;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-switch.active .toggle-circle {
+  transform: translateX(22px);
+}
+
+.toggle-hint {
+  font-family: 'WenQuanYi Zen Hei', sans-serif;
+  font-size: 12px;
+  color: rgba(213, 196, 171, 0.5);
+  margin: 4px 0 0 4px;
+}
